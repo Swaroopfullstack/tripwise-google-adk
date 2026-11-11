@@ -1,0 +1,32 @@
+services:
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATA_DIR: /app/runtime
+      PORTFOLIO_ROOT: /app
+      HF_HOME: /app/model-cache
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: ["portfolio-data:/app/runtime", "embedding-cache:/app/model-cache"]
+    init: true
+    restart: unless-stopped
+  ui:
+    build: .
+    env_file: .env
+    environment:
+      API_BASE_URL: http://api:8000
+      PORTFOLIO_ROOT: /app
+    command: ["uv", "run", "--frozen", "--no-sync", "streamlit", "run", "app.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--server.headless", "true"]
+    ports: ["127.0.0.1:8501:8501"]
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/app/.venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health',timeout=3)"]
+      interval: 30s
+      timeout: 5s
+    init: true
+    restart: unless-stopped
+volumes:
+  portfolio-data:
+  embedding-cache:

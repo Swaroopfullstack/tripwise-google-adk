@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.pdf binary
+*.png binary
+*.zip binary
+# Keep the bundled fixture hashes identical after checkout on every platform.
+assets/public/*.csv -text

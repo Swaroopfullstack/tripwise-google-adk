@@ -1,0 +1,44 @@
+[project]
+name = "tripwise-google-adk"
+version = "1.0.0"
+description = "Google ADK travel workflow with parallel specialists, tools, callbacks, bounded review and durable SQLite sessions."
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "langchain>=1.0,<2", "langgraph>=1.0,<2", "langgraph-checkpoint-sqlite>=3,<5",
+  "langchain-google-genai>=4,<5", "langchain-openai>=1,<2", "langchain-anthropic>=1,<2",
+  "langchain-text-splitters>=1,<2", "langchain-chroma>=0.2,<2", "chromadb>=1.5.9,<2",
+  "pydantic-settings>=2.8,<3", "fastapi>=0.115,<1", "uvicorn>=0.30,<1",
+  "python-multipart>=0.0.20,<0.1", "pandas>=2.2,<4", "scikit-learn>=1.6,<2",
+  "streamlit>=1.44,<2", "plotly>=6,<7", "pypdf>=6,<7", "httpx>=0.28,<1",
+  "rank-bm25>=0.2.2,<0.3", "mcp>=1.25,<2",
+]
+
+[project.optional-dependencies]
+embeddings = ["langchain-huggingface>=1,<3", "sentence-transformers>=5,<6"]
+adk = ["google-adk>=2.14,<3", "a2a-sdk>=1.3,<2", "sqlalchemy[asyncio]>=2,<3", "aiosqlite>=0.21,<1"]
+gradio = ["gradio>=5,<8"]
+postgres = ["langgraph-checkpoint-postgres>=3,<4", "psycopg[binary,pool]>=3.2,<4"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.12,<1"]
+
+[project.scripts]
+tripwise-google-adk = "portfolio.cli:main"
+portfolio = "portfolio.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/portfolio"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["embeddings: downloads and executes a real local embedding model", "protocol: actual local MCP transport integration"]
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

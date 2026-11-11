@@ -1,0 +1,38 @@
+{
+  "sources": [
+    {
+      "id": "nist_ai_rmf",
+      "name": "NIST AI Risk Management Framework 1.0",
+      "kind": "pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+      "file": "nist-ai-rmf-1.0.pdf",
+      "citation": "NIST AI 100-1 (January 2023), DOI 10.6028/NIST.AI.100-1",
+      "rights": "U.S. government publication; retain original notices/attribution; no NIST endorsement",
+      "bytes": 1946127,
+      "sha256": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1"
+    },
+    {
+      "id": "uci_iris",
+      "name": "UCI Iris",
+      "kind": "csv",
+      "url": "https://archive.ics.uci.edu/static/public/53/iris.zip",
+      "file": "iris.csv",
+      "citation": "Fisher, R. A. (1936). Iris. UCI Machine Learning Repository. DOI 10.24432/C56C76",
+      "rights": "CC BY 4.0, https://creativecommons.org/licenses/by/4.0/",
+      "bytes": 4759,
+      "sha256": "45022cab5a7807929ae2e85a2d63f35672220f1bdaa0e0640e1cf2140c0ce653"
+    },
+    {
+      "id": "sklearn_diabetes",
+      "name": "scikit-learn diabetes regression data",
+      "kind": "csv",
+      "url": "https://scikit-learn.org/stable/datasets/toy_dataset.html#diabetes-dataset",
+      "file": "diabetes.csv",
+      "citation": "Efron et al. (2004), Least Angle Regression; scikit-learn load_diabetes",
+      "rights": "Bundled public educational dataset; preserve dataset documentation and attribution",
+      "bytes": 95593,
+      "sha256": "7c367d7090be96044f8ac1dd5267f72b30b8f8e84ab4c70c3b4b5de63fd9bb34"
+    }
+  ],
+  "method": "Allowlisted HTTPS downloads; diabetes exported from sklearn's bundled public data"
+}

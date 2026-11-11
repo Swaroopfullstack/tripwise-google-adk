@@ -1,0 +1,10 @@
+{
+  "title": "TripWise ADK",
+  "repository": "tripwise-google-adk",
+  "description": "Google ADK travel workflow with parallel specialists, tools, callbacks, bounded review and durable SQLite sessions.",
+  "demo": "adk",
+  "url": "https://github.com/Swaroopfullstack/tripwise-google-adk",
+  "source_revision": "d4880b602e4748815f0fd0533d4dcb892585e02a",
+  "source_project": "06-tripwise-adk",
+  "runtime": "vendored self-contained portfolio package"
+}

@@ -1,0 +1,12 @@
+.git
+.venv
+.venv-verify
+.env
+.env.*
+runtime
+reports
+dist
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
