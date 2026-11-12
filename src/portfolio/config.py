@@ -15,6 +15,19 @@ ROOT = Path(os.getenv("PORTFOLIO_ROOT", str(Path(__file__).resolve().parents[2])
 Provider = Literal["google_genai", "openai", "anthropic"]
 
 
+def sampling_controls(provider: str, model: str) -> list[str]:
+    """Known local restrictions, not a live provider capability probe.
+
+    Google documents sampling as provider-controlled on Gemini 3.6 and newer.
+    Other model-specific restrictions must still be checked with the provider.
+    """
+    if provider == "google_genai":
+        match = re.match(r"(?:models/)?gemini-(\d+)(?:\.(\d+))?(?:-|$)", model.lower())
+        if match and (int(match[1]), int(match[2] or 0)) >= (3, 6):
+            return []
+    return ["temperature", "top_p"] + ([] if provider == "openai" else ["top_k"])
+
+
 @dataclass(frozen=True)
 class Principal:
     tenant: str
@@ -32,7 +45,7 @@ class Generation(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
     provider: Provider = "google_genai"
     model: str = Field(default="gemini-3.8-flash", min_length=1, max_length=120, pattern=r"^[\w./:-]+$")
-    temperature: float | None = Field(default=1.0, ge=0, le=2)
+    temperature: float | None = Field(default=None, ge=0, le=2)
     top_p: float | None = Field(default=None, gt=0, le=1)
     top_k: int | None = Field(default=None, ge=1, le=1000)
     max_tokens: int = Field(default=1600, ge=64, le=8192)
@@ -41,6 +54,12 @@ class Generation(BaseModel):
     def compatible_options(self):
         if self.provider == "openai" and self.top_k is not None:
             raise ValueError("OpenAI chat models do not accept top_k; leave it blank when switching")
+        allowed = sampling_controls(self.provider, self.model)
+        rejected = [name for name in ("temperature", "top_p", "top_k")
+                    if getattr(self, name) is not None and name not in allowed]
+        if rejected:
+            raise ValueError(f"{self.model} has provider-controlled sampling; leave "
+                             f"{', '.join(rejected)} blank instead of sending ineffective overrides")
         return self
 
 
@@ -51,7 +70,7 @@ class Settings(BaseSettings):
     data_dir: Path = ROOT / "runtime"
     llm_provider: Provider = "google_genai"
     llm_model: str = "gemini-3.8-flash"
-    llm_temperature: float | None = Field(default=1.0, ge=0, le=2)
+    llm_temperature: float | None = Field(default=None, ge=0, le=2)
     llm_top_p: float | None = Field(default=None, gt=0, le=1)
     llm_top_k: int | None = Field(default=None, ge=1, le=1000)
     llm_max_tokens: int = Field(default=1600, ge=64, le=8192)

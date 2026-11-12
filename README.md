@@ -69,7 +69,7 @@ RUN_MODE=live
 LLM_PROVIDER=google_genai
 LLM_MODEL=gemini-3.8-flash
 GOOGLE_API_KEY=REPLACE_WITH_YOUR_PRIVATE_KEY
-LLM_TEMPERATURE=1.0
+LLM_TEMPERATURE=
 LLM_TOP_P=
 LLM_TOP_K=
 LLM_MAX_TOKENS=1600
@@ -108,3 +108,7 @@ CI runs the runtime regression suite plus a dedicated real-HTTP Streamlit check 
 Extracted from [AI Engineering Portfolio](https://github.com/Swaroopfullstack/agentic-ai-portfolio) at `d4880b602e47`. The common `portfolio` runtime is intentionally vendored in full to preserve tested authorization, storage, model and protocol behavior. Only this project's launchers are included; there is no dependency on another checkout. Shared runtime tests may exercise supporting capabilities used by other projects. This is a standalone showcase application, not a claim that seven unrelated codebases were built independently.
 
 Public datasets/PDFs retain their [provenance](assets/public/PROVENANCE.json). See the [portfolio directory](https://github.com/Swaroopfullstack/agentic-ai-portfolio#standalone-project-repositories) for the other projects.
+
+## Open source license
+
+Original application code is available under the [MIT license](LICENSE). See [contributing](CONTRIBUTING.md) to run checks and submit improvements. Public data, dependencies and model weights retain their respective licenses and attribution.

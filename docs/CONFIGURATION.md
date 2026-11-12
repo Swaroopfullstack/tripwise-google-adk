@@ -11,7 +11,7 @@
 | `RUN_MODE` | Explicit demo fixture or actual inference | `demo` / `live` |
 | `LLM_PROVIDER` | LangChain provider identifier | `google_genai`; also `openai`, `anthropic` |
 | `LLM_MODEL` | Provider-specific model ID | `gemini-3.8-flash`; verify account availability |
-| `LLM_TEMPERATURE` | Sampling randomness | 1.0; blank omits; 0–2 allowed locally |
+| `LLM_TEMPERATURE` | Sampling randomness, when supported | blank omits; 0–2 schema bound; model restrictions apply |
 | `LLM_TOP_P` | Nucleus probability mass | blank omits; (0,1] |
 | `LLM_TOP_K` | Number of candidate tokens in sampling | blank omits; 1–1000; OpenAI rejected |
 | `LLM_MAX_TOKENS` | Maximum generated output | 1600; 64–8192 |
@@ -31,7 +31,11 @@
 
 **Generation top-k is not retrieval k.** Changing sampling k affects token selection at a provider; changing retrieval k changes the number of evidence chunks given to the answerer. MMR fetch-k controls its candidate pool. Keep these experiments separate.
 
-Provider capabilities differ by model and version. Blank optional sampling settings are omitted. OpenAI `top_k` fails validation. Google and Anthropic model-specific rejections are returned as failures; controls are never silently dropped. Some reasoning models restrict temperature/top-p too. Start with defaults, test one parameter at a time, and retain a passing evaluation before changing a production default. A configured model is not a promise of availability.
+Provider capabilities differ by model and version. Blank optional sampling settings are omitted. OpenAI `top_k` fails validation. For Gemini 3.6 and newer numeric model families, this application rejects explicit temperature/top-p/top-k overrides because Google documents them as provider-controlled. The API publishes these known local rules in `model_controls`; the UI disables the affected overrides. This is not live capability discovery or a guarantee that other models accept every remaining option. Provider-specific failures still surface normally.
+
+**Migration from the earlier examples:** set `LLM_TEMPERATURE=`, `LLM_TOP_P=` and `LLM_TOP_K=` for the default Gemini 3.8 model. Existing private configuration is not edited automatically. Old explicit overrides fail with an actionable validation error. Run `uv run portfolio doctor` to inspect the selected settings without inference or credential output.
+
+References checked 12 November 2026: [Google generation configuration](https://ai.google.dev/api/generate-content), [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash), and [LangChain model interfaces](https://docs.langchain.com/oss/python/langchain/models). Start with provider defaults and evaluate one change at a time. A configured model is not a promise of availability.
 
 ## Switch to another provider
 

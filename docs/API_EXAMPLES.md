@@ -56,7 +56,7 @@ Upload a PDF to the same session before calling `/v1/evidence/query`:
   "generation": {
     "provider": "google_genai",
     "model": "gemini-3.8-flash",
-    "temperature": 1.0,
+    "temperature": null,
     "top_p": null,
     "top_k": null,
     "max_tokens": 1600

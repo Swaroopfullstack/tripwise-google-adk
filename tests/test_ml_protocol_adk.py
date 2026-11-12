@@ -111,7 +111,7 @@ def test_actual_provider_client_construction_without_network(settings):
         "openai_api_key": SecretStr("dummy-local-test"), "anthropic_api_key": SecretStr("dummy-local-test")})
     from portfolio.config import Generation
     for provider, model in [("google_genai", "gemini-3.8-flash"), ("openai", "gpt-4o-mini"), ("anthropic", "claude-sonnet-4-6")]:
-        client = build_model(configured, Generation(provider=provider, model=model, temperature=1, max_tokens=512))
+        client = build_model(configured, Generation(provider=provider, model=model, max_tokens=512))
         assert client is not None  # Constructs actual SDK adapters; deliberately no inference.
 
 

@@ -70,12 +70,22 @@ def run(project='TripWise ADK'):
             provider = st.selectbox("Provider", providers, index=providers.index(generation["provider"]))
             allowed = config["allowed_models"][provider]
             model = st.selectbox("Model", allowed, index=allowed.index(generation["model"]) if generation["model"] in allowed else 0)
-            temperature = st.slider("Temperature", 0.0, 2.0, float(generation["temperature"] or 0), .1)
-            top_p = st.slider("Top-p", .05, 1.0, float(generation["top_p"] or .95), .05) if st.checkbox("Override top-p") else None
-            top_k = st.number_input("Top-k", 1, 1000, int(generation["top_k"] or 40)) if st.checkbox("Override top-k", disabled=provider == "openai") and provider != "openai" else None
+            controls = config["model_controls"][provider][model]
+            temperature = top_p = top_k = None
+            if st.checkbox("Override temperature", value=generation["temperature"] is not None,
+                           disabled="temperature" not in controls) and "temperature" in controls:
+                temperature = st.slider("Temperature", 0.0, 2.0, float(generation["temperature"] or 0), .1)
+            if st.checkbox("Override top-p", value=generation["top_p"] is not None,
+                           disabled="top_p" not in controls) and "top_p" in controls:
+                top_p = st.slider("Top-p", .05, 1.0, float(generation["top_p"] or .95), .05)
+            if st.checkbox("Override top-k", value=generation["top_k"] is not None,
+                           disabled="top_k" not in controls) and "top_k" in controls:
+                top_k = st.number_input("Top-k", 1, 1000, int(generation["top_k"] or 40))
+            if not controls:
+                st.caption("Sampling is controlled by this model provider; use its defaults.")
             max_tokens = st.number_input("Maximum output tokens", 64, 8192, int(generation["max_tokens"]), 64)
             generation.update(provider=provider, model=model, temperature=temperature, top_p=top_p, top_k=top_k, max_tokens=max_tokens)
-            st.caption("Only server-enabled models appear. Unsupported model-specific sampling settings return an error; they are not silently ignored.")
+            st.caption("Controls reflect known server restrictions. Other model-specific limits still require provider documentation and validation.")
         uploads = api("GET", f"/v1/sessions/{session_id}/uploads")
         csv_choices = {item["id"]: item["name"] for item in uploads if item["kind"] == "csv"}
         if st.session_state.get("dataset_id") not in csv_choices:

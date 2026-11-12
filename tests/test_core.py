@@ -13,7 +13,7 @@ from portfolio.storage import Conflict, NotFound, Store
 def test_provider_generation_mapping(settings):
     configured = settings.model_copy(update={"google_api_key": __import__("pydantic").SecretStr("test-placeholder")})
     with patch("portfolio.models.init_chat_model") as initialize:
-        build_model(configured, Generation(top_k=20, top_p=.8, temperature=1, max_tokens=800))
+        build_model(configured, Generation(model="gemini-2.5-flash", top_k=20, top_p=.8, temperature=1, max_tokens=800))
     assert initialize.call_args.kwargs["model_provider"] == "google_genai"
     assert initialize.call_args.kwargs["top_k"] == 20
     with pytest.raises(ValueError, match="top_k"):

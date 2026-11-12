@@ -7,7 +7,7 @@ from importlib.metadata import version
 import json
 from uuid import uuid4
 
-from .config import Principal, Settings
+from .config import Principal, Settings, sampling_controls
 
 
 def emit(value):
@@ -82,6 +82,8 @@ def main():
         settings = Settings()
         emit({"mode": settings.run_mode, "environment": settings.app_env,
               "generation": settings.generation().model_dump(), "embedding_backend": settings.embedding_backend,
+              "sampling_controls": sampling_controls(settings.llm_provider, settings.llm_model),
+              "sampling_policy": "Known local restrictions; not a live capability or inference probe",
               "packages": {name: version(name) for name in ["langchain", "langgraph", "fastapi", "chromadb", "mcp", "scikit-learn"]},
               "live_inference_tested": False})
     elif args.command == "demo":

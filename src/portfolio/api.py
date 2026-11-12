@@ -15,7 +15,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, ConfigDict, Field
 from starlette.concurrency import run_in_threadpool
 
-from .config import Generation, Settings
+from .config import Generation, Settings, sampling_controls
 from .insight import AgentContext
 from .models import ModelBudget, model_budget
 from .research import build_research
@@ -157,7 +157,10 @@ def create_app(settings: Settings | None = None):
     @app.get("/v1/config")
     def config(principal=Depends(identity), service=Depends(services)):
         return {"mode": service.settings.run_mode, "generation": service.settings.generation().model_dump(),
-                "allowed_models": service.settings.allowed_models(), "identity": {"tenant": principal.tenant,
+                "allowed_models": service.settings.allowed_models(),
+                "model_controls": {provider: {model: sampling_controls(provider, model) for model in models}
+                                   for provider, models in service.settings.allowed_models().items()},
+                "identity": {"tenant": principal.tenant,
                 "user": principal.user, "role": principal.role}, "embedding_backend": service.settings.embedding_backend,
                 "retrieval_k": service.settings.retrieval_k, "retrieval_fetch_k": service.settings.retrieval_fetch_k,
                 "strategies": ["hybrid", "vector", "mmr", "multi_query", "parent", "compression", "self_query"]}
